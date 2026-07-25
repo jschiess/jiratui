@@ -18,6 +18,7 @@ from jiratui.config import CONFIGURATION
 from jiratui.models import JiraIssue, JiraIssueSearchResponse
 from jiratui.utils.styling import get_style_for_work_item_status, get_style_for_work_item_type
 from jiratui.utils.urls import build_external_url_for_issue
+from jiratui.widgets.commons.vim import VimDataTable
 from jiratui.widgets.messages import SearchWorkItem
 from jiratui.widgets.screens.goto import GotToScreen
 
@@ -65,7 +66,9 @@ class DataTableSearchInput(Input):
     - `search_results_page_filtering_minimum_term_length`
     """
 
-    BINDINGS = [Binding('escape', 'hide', 'Hide search input', show=False)]
+    BINDINGS = [
+        Binding('escape', 'hide', 'Hide search input', show=False, id='search_results.hide_filter')
+    ]
 
     total: Reactive[int | None] = reactive(None)
     """Keeps track of the total number of records after filtering them based on the input value."""
@@ -135,7 +138,7 @@ class DataTableSearchInput(Input):
                 self.total = len(filtered)
 
 
-class IssuesSearchResultsTable(DataTable):
+class IssuesSearchResultsTable(VimDataTable):
     """The widget that displays the results of a search.
 
     This widget provides a reactive attribute, `search_results`, that contains the issues that the table will
@@ -164,8 +167,9 @@ class IssuesSearchResultsTable(DataTable):
             action='filter',
             description='Filter',
             tooltip='Filter the results of the current page',
+            id='search_results.filter',
         ),
-        Binding('escape', 'hide', 'Hide search input', show=False),
+        Binding('escape', 'hide', 'Hide search input', show=False, id='search_results.hide_filter'),
         Binding(
             key='alt+left',
             action='previous_issues_page',
@@ -173,6 +177,7 @@ class IssuesSearchResultsTable(DataTable):
             show=True,
             key_display='alt+left',
             tooltip='Previous page',
+            id='search_results.previous_page',
         ),
         Binding(
             key='alt+right',
@@ -181,6 +186,7 @@ class IssuesSearchResultsTable(DataTable):
             show=True,
             key_display='alt+right',
             tooltip='Next page',
+            id='search_results.next_page',
         ),
         Binding(
             key='ctrl+o',
@@ -189,6 +195,7 @@ class IssuesSearchResultsTable(DataTable):
             show=True,
             key_display='^o',
             tooltip='Open item in the browser',
+            id='search_results.open_in_browser',
         ),
         Binding(
             key='d',
@@ -197,6 +204,7 @@ class IssuesSearchResultsTable(DataTable):
             show=True,
             key_display='d',
             tooltip='Delete the work item currently highlighted',
+            id='search_results.delete',
         ),
         Binding(
             key='f6',
@@ -205,6 +213,7 @@ class IssuesSearchResultsTable(DataTable):
             show=True,
             key_display='f6',
             tooltip='View related work items',
+            id='search_results.goto',
         ),
     ]
 
@@ -416,7 +425,7 @@ class IssuesSearchResultsTable(DataTable):
             if self.page > 0:
                 return True
             return False
-        return True
+        return super().check_action(action, parameters)
 
     async def action_previous_issues_page(self):
         if self.page > 1:

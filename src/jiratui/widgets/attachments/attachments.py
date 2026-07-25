@@ -25,6 +25,7 @@ from jiratui.utils.mime import (
 )
 from jiratui.utils.urls import build_external_url_for_attachment
 from jiratui.widgets.attachments.add import AddAttachmentScreen
+from jiratui.widgets.commons.vim import VimDataTable
 from jiratui.widgets.screens.confirmation import ConfirmationScreen
 
 
@@ -36,7 +37,7 @@ class WorkItemAttachments:
     attachments: list[Attachment] | None = None
 
 
-class AttachmentsDataTable(DataTable):
+class AttachmentsDataTable(VimDataTable):
     """A [DataTable](#textual.widgets.DataTable) to list the files attached to a work item.
 
     The table is responsible for:
@@ -53,6 +54,7 @@ class AttachmentsDataTable(DataTable):
             description='Delete',
             key_display='d',
             tooltip='Deletes the attachment',
+            id='attachment.delete',
         ),
         Binding(
             key='ctrl+o',
@@ -61,6 +63,7 @@ class AttachmentsDataTable(DataTable):
             show=True,
             key_display='^o',
             tooltip='Open file in the browser',
+            id='attachment.open_in_browser',
         ),
     ]
     NOTIFICATIONS_DEFAULT_TITLE = 'Work Item Attachments'
@@ -195,6 +198,7 @@ class IssueAttachmentsWidget(VerticalScroll):
             description='Attach File',
             key_display='n',
             tooltip='Attach a new file to a work item',
+            id='attachments.add',
         ),
     ]
 

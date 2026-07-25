@@ -15,6 +15,11 @@ pre_defined_jql_expressions:
     label: "Work in the current sprint"
     expression: 'sprint in openSprints()'
 jql_expression_id_for_work_items_search: 1
+enable_vim_keybindings: False
+keybindings:
+  # maps the ID of a keybinding into the key(s) that trigger it
+  # main.find_by_text: 'ctrl+f'
+  # app.quit: 'ctrl+q,q'
 styling:
   work_item_status_colors:
     closed: green

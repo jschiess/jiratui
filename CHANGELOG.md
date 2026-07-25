@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Add config variable `enable_vim_keybindings` (and the launch argument `--vim`) that enables a set of Vim-like
+keybindings: `j`/`k`/`g`/`G` to move around tables and lists, `h`/`l` to move between the panes of the main screen,
+`H`/`L` to switch tabs, `esc` to go back to the list of work items, `/` to filter the current page of search results,
+`q` to quit and `:` to open a command line that supports `:q`, `:q!` and `:help`. When these keybindings are enabled
+the JQL Query input is activated with `J` and the Work Item Key input with `K`. Closes https://github.com/whyisdifficult/jiratui/issues/53
+- Add config variable `keybindings` that allows users to re-map any keybinding of the application. Every keybinding
+now has a unique ID, e.g. `main.find_by_text`, that can be mapped to the key, or comma-separated list of keys, of the
+user's choice.
+
 ## [1.11.2] 2026-07-25
 
 ### Bug Fixes

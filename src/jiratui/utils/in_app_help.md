@@ -80,6 +80,52 @@ Besides the hot-keys above the following are always available.
 
 All these bindings above are always displayed at the bottom of the app depending on the component you are focus on.
 
+# Vim-like Keybindings
+
+If you set `enable_vim_keybindings: True` in the config file, or launch the app with `jiratui ui --vim`, the following
+keys become available:
+
+| Key   | Component        | Action                                                       |
+|-------|------------------|--------------------------------------------------------------|
+| `j`   | Tables and lists | Moves to the next item, e.g. the next work item or comment   |
+| `k`   | Tables and lists | Moves to the previous item                                   |
+| `j`   | Anywhere else    | Focuses the next widget, e.g. the next search filter         |
+| `k`   | Anywhere else    | Focuses the previous widget                                  |
+| `g`   | Tables           | Moves to the first item                                      |
+| `G`   | Tables           | Moves to the last item                                       |
+| `h`   | Main screen      | Focuses the pane on the left, i.e. the work items            |
+| `l`   | Main screen      | Focuses the pane on the right, i.e. the currently active tab |
+| `H`   | Main screen      | Activates and focuses the previous tab                       |
+| `L`   | Main screen      | Activates and focuses the next tab                           |
+| `esc` | Main screen      | Moves the focus back to the list of work items               |
+| `/`   | Search Results   | Filters the items in the current page of results             |
+| `q`   | Anywhere         | Quits the application                                        |
+| `:`   | Anywhere         | Opens the command line                                       |
+
+The command line supports `:q`, `:x` and `:wq` to quit, `:q!` to quit without confirmation and `:h` (or `:help`) to
+show this help.
+
+Since `j` and `k` are used for moving up and down, the 2 inputs that use those keys are re-mapped: press `J` to
+activate the JQL Query input and `K` to activate the Work Item Key input.
+
+These keys are only active when the focus is not on an input field, so you can still type `j`, `k` or `q` when you
+write a JQL expression, a comment or any other text.
+
+# Custom Keybindings
+
+Every keybinding has a unique ID, e.g. `main.find_by_text`. You can re-map any of them with the setting
+`keybindings` in the config file:
+
+```yaml
+keybindings:
+  main.find_by_text: 'ctrl+f'
+  app.quit: 'ctrl+q,q'
+```
+
+Custom keybindings take precedence over the defaults and over the keys enabled by `enable_vim_keybindings`. The list
+of available IDs is documented at
+[https://jiratui.readthedocs.io/en/latest/users/usage/index.html#custom-keybindings](https://jiratui.readthedocs.io/en/latest/users/usage/index.html#custom-keybindings)
+
 # Searching Work Items
 
 JiraTUI supports a few ways to search work items.

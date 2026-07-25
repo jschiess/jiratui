@@ -10,6 +10,14 @@ from textual.binding import Binding
 from jiratui.api_controller.controller import APIController, APIControllerResponse
 from jiratui.config import CONFIGURATION, ApplicationConfiguration
 from jiratui.constants import LOGGER_NAME
+from jiratui.keys import (
+    VIM_ACTION_PREFIX,
+    VimCommand,
+    build_keymap,
+    parse_vim_command,
+    unknown_binding_ids,
+    vim_keybindings_enabled,
+)
 from jiratui.models import JiraServerInfo
 from jiratui.utils.logging import JiraTUILogger
 from jiratui.utils.session import ApplicationSession
@@ -27,18 +35,25 @@ class JiraApp(App):
 
     TITLE = 'JiraTUI'
     BINDINGS = [
-        Binding(key='f1,ctrl+question_mark,ctrl+shift+slash', action='help', description='?'),
+        Binding(
+            key='f1,ctrl+question_mark,ctrl+shift+slash',
+            action='help',
+            description='?',
+            id='app.help',
+        ),
         Binding(
             key='f2',
             action='server_info',
             description='Server',
             tooltip='Show details of the Jira server',
+            id='app.server_info',
         ),
         Binding(
             key='f3',
             action='config_info',
             description='Config',
             tooltip='Show the settings in the configuration file',
+            id='app.config_info',
         ),
         Binding(
             key='ctrl+q',
@@ -47,6 +62,32 @@ class JiraApp(App):
             key_display='^q',
             tooltip='Quit',
             show=True,
+            id='app.quit',
+        ),
+        Binding(
+            key=':',
+            action='vim_command',
+            description='Command',
+            key_display=':',
+            tooltip='Open the command line, e.g. :q',
+            show=False,
+            id='app.vim_command',
+        ),
+        # these are the fall-back bindings for `j` and `k`: widgets that hold a list of items, e.g. the search
+        # results, handle these keys themselves; anywhere else they simply move the focus
+        Binding(
+            key='j',
+            action='vim_focus_next',
+            description='Focus the next widget',
+            show=False,
+            id='app.vim_focus_next',
+        ),
+        Binding(
+            key='k',
+            action='vim_focus_previous',
+            description='Focus the previous widget',
+            show=False,
+            id='app.vim_focus_previous',
         ),
     ]
     DEFAULT_THEME = 'textual-dark'
@@ -129,8 +170,26 @@ class JiraApp(App):
     def session(self) -> ApplicationSession:
         return self.__session
 
+    def _setup_keybindings(self) -> None:
+        """Applies the keymap of the application.
+
+        The keymap contains the Vim-like keybindings, when `enable_vim_keybindings` is enabled, and the keybindings
+        that the user defined via the setting `keybindings`.
+
+        Returns:
+            None
+        """
+
+        if unknown_ids := unknown_binding_ids(self.config):
+            self.logger.warning(
+                f'Ignoring unknown keybinding IDs in the setting `keybindings`: {", ".join(unknown_ids)}'
+            )
+        if keymap := build_keymap(self.config):
+            self.set_keymap(keymap)
+
     async def on_mount(self) -> None:
         self._set_application_title()
+        self._setup_keybindings()
 
         await self.push_screen(
             MainScreen(
@@ -176,9 +235,66 @@ class JiraApp(App):
         if CONFIGURATION.get().confirm_before_quit:
             await self.push_screen(QuitScreen())
         else:
-            await self.api.api.client.close_async_client()
-            await self.api.api.async_http_client.close_async_client()
-            self.app.exit()
+            await self._exit_application()
+
+    async def _exit_application(self) -> None:
+        """Closes the HTTP clients and exits the application without asking for confirmation."""
+
+        await self.api.api.client.close_async_client()
+        await self.api.api.async_http_client.close_async_client()
+        self.app.exit()
+
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
+        """Check if an action may run."""
+
+        if action.startswith(VIM_ACTION_PREFIX) and not vim_keybindings_enabled(self.config):
+            return False
+        return super().check_action(action, parameters)
+
+    def action_vim_focus_next(self) -> None:
+        """Focuses the next widget. This is the fall-back behaviour of `j`."""
+
+        self.screen.focus_next()
+
+    def action_vim_focus_previous(self) -> None:
+        """Focuses the previous widget. This is the fall-back behaviour of `k`."""
+
+        self.screen.focus_previous()
+
+    async def action_vim_command(self) -> None:
+        """Opens the Vim-like command line."""
+
+        from jiratui.widgets.screens.vim import VimCommandScreen
+
+        await self.push_screen(VimCommandScreen(), self._handle_vim_command)
+
+    def _handle_vim_command(self, value: str | None = None) -> None:
+        """Runs the command that the user entered in the Vim-like command line.
+
+        Args:
+            value: the command entered by the user, e.g. `q!`. This is `None` when the user closes the command line
+            without entering a command.
+
+        Returns:
+            None
+        """
+
+        if not value or not value.strip():
+            return
+
+        command, cleaned_value = parse_vim_command(value)
+        if command == VimCommand.QUIT:
+            self.run_worker(self.action_quit())
+        elif command == VimCommand.FORCE_QUIT:
+            self.run_worker(self._exit_application())
+        elif command == VimCommand.HELP:
+            self.run_worker(self.action_help())
+        else:
+            self.notify(
+                f'E492: Not an editor command: {cleaned_value}',
+                title='Command',
+                severity='error',
+            )
 
     async def _set_application_title_using_server_info(self) -> None:
         response_server_info: APIControllerResponse = await self.api.server_info()

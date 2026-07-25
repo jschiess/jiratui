@@ -265,6 +265,23 @@ class ApplicationConfiguration(BaseSettings):
     enable_goto: bool = True
     """Enables/Disable the feature that allows users to open a modal screen to go to (aka. search and fetch) items
     related to the currently-selected item."""
+    enable_vim_keybindings: bool = False
+    """When this is `True` the application enables a set of Vim-like keybindings: `hjkl` to move around, `q` to quit,
+    `:` to open a command line that supports `:q`, `:q!` and `:help`, `/` to filter the items in the current page of
+    search results and `esc` to go back to the list of work items. Refer to the section "Keybindings" in the
+    documentation for the complete list."""
+    keybindings: dict[str, str] | None = None
+    """Custom keybindings. This maps the ID of a keybinding into the key, or comma-separated list of keys, that
+    triggers it. These keybindings take precedence over the default ones and over the ones enabled by
+    `enable_vim_keybindings`.
+    E.g.:
+    ```yaml
+    keybindings:
+      main.find_by_text: 'ctrl+f'
+      app.quit: 'ctrl+q,q'
+    ```
+    Refer to [jiratui.keys.KNOWN_BINDING_IDS](#jiratui.keys.KNOWN_BINDING_IDS) for the IDs of the available
+    keybindings."""
 
     model_config = SettingsConfigDict(
         extra='allow',

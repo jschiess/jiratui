@@ -1,9 +1,11 @@
 """This module contains the widgets used for the filters of the search functionality used in the main screen."""
 
 from textual import on
+from textual.binding import Binding
 from textual.reactive import Reactive, reactive
 from textual.widgets import Checkbox, Input, Select
 
+from jiratui.keys import effective_key
 from jiratui.widgets.base import DateInput
 from jiratui.widgets.screens.jql import JQLEditorScreen
 
@@ -115,7 +117,7 @@ class WorkItemInputWidget(Input):
             value=value,
         )
         self.border_title = 'Work Item Key'
-        self.border_subtitle = '(k)'
+        self.border_subtitle = f'({effective_key("main.focus_work_item_key", "k")})'
 
     @property
     def help_anchor(self) -> str:
@@ -197,10 +199,11 @@ class JQLSearchWidget(Input):
     HELP = 'See Searching Using JQL Expressions section in the help'
 
     BINDINGS = [
-        (
-            'ctrl+e',
-            'open_jql_editor',
-            'JQL Editor',
+        Binding(
+            key='ctrl+e',
+            action='open_jql_editor',
+            description='JQL Editor',
+            id='jql.editor',
         )
     ]
 
@@ -214,7 +217,7 @@ class JQLSearchWidget(Input):
             type='text',
         )
         self.border_title = 'JQL Query'
-        self.border_subtitle = '(j)'
+        self.border_subtitle = f'({effective_key("main.focus_jql", "j")})'
 
     @property
     def help_anchor(self) -> str:

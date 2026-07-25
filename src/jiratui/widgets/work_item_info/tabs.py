@@ -13,10 +13,27 @@ class InfoTabbedContent(TabbedContent):
 
     BINDINGS = [
         Binding(
-            key='ctrl+e', action='edit_content', description='Edit', show=True, key_display='^e'
+            key='ctrl+e',
+            action='edit_content',
+            description='Edit',
+            show=True,
+            key_display='^e',
+            id='work_item_info.edit',
         ),
-        Binding(key='v', action='view_content', description='View', key_display='v'),
-        Binding(key='c', action='copy_content', description='Copy', key_display='c'),
+        Binding(
+            key='v',
+            action='view_content',
+            description='View',
+            key_display='v',
+            id='work_item_info.view',
+        ),
+        Binding(
+            key='c',
+            action='copy_content',
+            description='Copy',
+            key_display='c',
+            id='work_item_info.copy',
+        ),
     ]
 
     class DisplayContent(Message):

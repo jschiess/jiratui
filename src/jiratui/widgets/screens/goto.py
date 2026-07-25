@@ -13,9 +13,10 @@ from textual.worker import Worker
 from jiratui.api_controller.controller import APIController, APIControllerResponse
 from jiratui.models import JiraIssue, JiraIssueSearchResponse, RelatedJiraIssue
 from jiratui.utils.urls import build_external_url_for_issue
+from jiratui.widgets.commons.vim import VimDataTable
 
 
-class GoToItemsTable(DataTable):
+class GoToItemsTable(VimDataTable):
     """A Textual's [DataTable](#textual.widgets.DataTable) to shows work items.
 
     The table is responsible for:
@@ -38,6 +39,7 @@ class GoToItemsTable(DataTable):
             show=True,
             key_display='^o',
             tooltip='Open in browser',
+            id='goto_item.open_in_browser',
         ),
         Binding(
             key='ctrl+k',
@@ -46,6 +48,7 @@ class GoToItemsTable(DataTable):
             show=True,
             key_display='^k',
             tooltip='Copy key',
+            id='goto_item.copy_key',
         ),
         Binding(
             key='ctrl+j',
@@ -54,6 +57,7 @@ class GoToItemsTable(DataTable):
             show=True,
             key_display='^j',
             tooltip='Copy URL',
+            id='goto_item.copy_url',
         ),
     ]
 

@@ -266,6 +266,178 @@ Besides the hot-keys above the following are always available.
 
 All these bindings above are always displayed at the bottom of the app depending on the component you are focus on.
 
+### Vim-like Keybindings
+
+If you are used to Vim you can enable a set of Vim-like keybindings with the setting `enable_vim_keybindings`:
+
+```yaml
+enable_vim_keybindings: True
+```
+
+You can also enable them for a single session with the launch argument `--vim`:
+
+```shell
+jiratui ui --vim
+```
+
+When the Vim-like keybindings are enabled the following keys become available:
+
+| Key   | Component        | Action                                                       |
+| ----- | ---------------- | ------------------------------------------------------------ |
+| `j`   | Tables and lists | Moves to the next item, e.g. the next work item or comment   |
+| `k`   | Tables and lists | Moves to the previous item                                   |
+| `j`   | Anywhere else    | Focuses the next widget, e.g. the next search filter         |
+| `k`   | Anywhere else    | Focuses the previous widget                                  |
+| `g`   | Tables           | Moves to the first item                                      |
+| `G`   | Tables           | Moves to the last item                                       |
+| `h`   | Main screen      | Focuses the pane on the left, i.e. the work items            |
+| `l`   | Main screen      | Focuses the pane on the right, i.e. the currently active tab |
+| `H`   | Main screen      | Activates and focuses the previous tab                       |
+| `L`   | Main screen      | Activates and focuses the next tab                           |
+| `esc` | Main screen      | Moves the focus back to the list of work items               |
+| `/`   | Search Results   | Filters the items in the current page of results             |
+| `q`   | Anywhere         | Quits the application                                        |
+| `:`   | Anywhere         | Opens the command line                                       |
+
+The command line supports the following commands:
+
+| Command           | Action                                                |
+| ----------------- | ----------------------------------------------------- |
+| `:q`, `:x`, `:wq` | Quits the application                                 |
+| `:q!`             | Quits the application without asking for confirmation |
+| `:h`, `:help`     | Shows the help                                        |
+
+Because `j` and `k` are used for moving up and down, the 2 inputs that use those keys are re-mapped:
+
+| Key | Component                         |
+| --- | --------------------------------- |
+| `J` | Activates the JQL Query input     |
+| `K` | Activates the Work Item Key input |
+
+The rest of the keys described in the previous section keep working as usual. Note that these keybindings are only
+active when the focus is not on an input field; this way you can still type `j`, `k` or `q` when you are writing a
+JQL expression, a comment or any other text.
+
+### Custom Keybindings
+
+Every keybinding of the application has a unique ID, e.g. `main.find_by_text`. You can use these IDs to re-map any
+keybinding to the key, or list of keys, of your choice via the setting `keybindings`:
+
+```yaml
+keybindings:
+  # use ctrl+f for full-text search
+  main.find_by_text: 'ctrl+f'
+  # quit with ctrl+q or q
+  app.quit: 'ctrl+q,q'
+```
+
+Keys are separated by commas; e.g. `'ctrl+q,q'` binds the action to both `ctrl+q` and `q`. Modifiers are written as
+`ctrl+`, `alt+` and `shift+`. Custom keybindings take precedence over the defaults and over the keys enabled by
+`enable_vim_keybindings`, so you can enable the Vim-like keybindings and still adjust individual keys. Unknown
+binding IDs are ignored and reported in the log file.
+
+These are the IDs of the keybindings that you can re-map:
+
+| Binding ID                          | Default Key   | Action                                             |
+| ----------------------------------- | ------------- | -------------------------------------------------- |
+| `app.help`                          | `f1`          | Shows the help                                     |
+| `app.server_info`                   | `f2`          | Shows the information of the Jira server           |
+| `app.config_info`                   | `f3`          | Shows the settings currently loaded                |
+| `app.quit`                          | `ctrl+q`      | Quits the application                              |
+| `app.vim_command`                   | `:`           | Opens the command line (Vim-like keybindings only) |
+| `app.vim_focus_next`                | `j`           | Focuses the next widget                            |
+| `app.vim_focus_previous`            | `k`           | Focuses the previous widget                        |
+| `main.search`                       | `ctrl+r`      | Searches work items                                |
+| `main.find_by_text`                 | `/`           | Full-text search                                   |
+| `main.create_work_item`             | `ctrl+n`      | Creates a work item                                |
+| `main.copy_work_item_key`           | `ctrl+k`      | Copies the key of the selected work item           |
+| `main.copy_work_item_url`           | `ctrl+j`      | Copies the URL of the selected work item           |
+| `main.create_git_branch`            | `ctrl+g`      | Creates a Git branch for the selected work item    |
+| `main.recent_history`               | `f7`          | Shows the recently viewed work items               |
+| `main.focus_project`                | `p`           | Focuses the Project dropdown                       |
+| `main.focus_issue_type`             | `t`           | Focuses the Issue Type dropdown                    |
+| `main.focus_status`                 | `s`           | Focuses the Status dropdown                        |
+| `main.focus_assignee`               | `a`           | Focuses the Assignee dropdown                      |
+| `main.focus_work_item_key`          | `k`           | Focuses the Work Item Key input                    |
+| `main.focus_created_from`           | `f`           | Focuses the Created From input                     |
+| `main.focus_created_until`          | `u`           | Focuses the Created Until input                    |
+| `main.focus_order_by`               | `o`           | Focuses the Sort dropdown                          |
+| `main.focus_active_sprint`          | `v`           | Focuses the Active Sprint checkbox                 |
+| `main.focus_jql`                    | `j`           | Focuses the JQL Query input                        |
+| `main.focus_search_results`         | `1`           | Focuses the Work Items pane                        |
+| `main.focus_info_tab`               | `2`           | Focuses the Info tab                               |
+| `main.focus_details_tab`            | `3`           | Focuses the Details tab                            |
+| `main.focus_comments_tab`           | `4`           | Focuses the Comments tab                           |
+| `main.focus_related_tab`            | `5`           | Focuses the Related tab                            |
+| `main.focus_attachments_tab`        | `6`           | Focuses the Attachments tab                        |
+| `main.focus_links_tab`              | `7`           | Focuses the Links tab                              |
+| `main.focus_subtasks_tab`           | `8`           | Focuses the Subtasks tab                           |
+| `main.vim_focus_left_pane`          | `h`           | Focuses the work items pane                        |
+| `main.vim_focus_right_pane`         | `l`           | Focuses the active tab                             |
+| `main.vim_previous_tab`             | `H`           | Activates the previous tab                         |
+| `main.vim_next_tab`                 | `L`           | Activates the next tab                             |
+| `main.vim_focus_search_results`     | `esc`         | Moves the focus back to the work items             |
+| `search_results.filter`             | `.`           | Filters the items in the current page              |
+| `search_results.hide_filter`        | `esc`         | Hides the filter input                             |
+| `search_results.previous_page`      | `alt+left`    | Retrieves the previous page of results             |
+| `search_results.next_page`          | `alt+right`   | Retrieves the next page of results                 |
+| `search_results.open_in_browser`    | `ctrl+o`      | Opens the selected work item in the browser        |
+| `search_results.delete`             | `d`           | Deletes the selected work item                     |
+| `search_results.goto`               | `f6`          | Shows the items related to the selected work item  |
+| `details.save`                      | `ctrl+s`      | Saves the changes made to a work item              |
+| `details.worklog`                   | `ctrl+l`      | Shows the worklog of a work item                   |
+| `details.flag`                      | `ctrl+f`      | Adds/Removes a flag to a work item                 |
+| `details.focus_assignee`            | `x`           | Focuses the Assignee widget                        |
+| `details.focus_priority`            | `y`           | Focuses the Priority widget                        |
+| `details.focus_status`              | `z`           | Focuses the Status widget                          |
+| `work_item_info.edit`               | `ctrl+e`      | Edits the content of the active tab                |
+| `work_item_info.view`               | `v`           | Views the content of the active tab                |
+| `work_item_info.copy`               | `c`           | Copies the content of the active tab               |
+| `comments.add`                      | `n`           | Adds a comment                                     |
+| `comment.delete`                    | `d`           | Deletes a comment                                  |
+| `attachments.add`                   | `ctrl+u`, `n` | Attaches a file                                    |
+| `attachment.delete`                 | `d`           | Deletes an attachment                              |
+| `attachment.open_in_browser`        | `ctrl+o`      | Opens an attachment in the browser                 |
+| `related_items.add`                 | `n`           | Links a work item                                  |
+| `related_item.quick_view`           | `v`           | Views a related work item                          |
+| `related_item.unlink`               | `d`           | Unlinks a related work item                        |
+| `related_item.goto`                 | `f6`          | Shows the items related to a related work item     |
+| `remote_links.add`                  | `n`           | Adds a web link                                    |
+| `remote_link.delete`                | `d`           | Deletes a web link                                 |
+| `subtasks.create`                   | `ctrl+n`      | Creates a subtask                                  |
+| `subtask.quick_view`                | `v`           | Views a subtask                                    |
+| `subtask.goto`                      | `f6`          | Shows the items related to a subtask               |
+| `worklog.add`                       | `n`           | Adds a worklog entry                               |
+| `worklog.edit`                      | `ctrl+e`      | Edits a worklog entry                              |
+| `worklog.delete`                    | `d`           | Deletes a worklog entry                            |
+| `worklog.open_in_browser`           | `ctrl+o`      | Opens a worklog entry in the browser               |
+| `history.empty`                     | `d`           | Empties the recent history                         |
+| `history_item.copy_key`             | `ctrl+k`      | Copies the key of an item of the recent history    |
+| `history_item.copy_url`             | `ctrl+j`      | Copies the URL of an item of the recent history    |
+| `history_item.open_in_browser`      | `ctrl+o`      | Opens an item of the recent history in the browser |
+| `goto_item.copy_key`                | `ctrl+k`      | Copies the key of an item of the go-to screen      |
+| `goto_item.copy_url`                | `ctrl+j`      | Copies the URL of an item of the go-to screen      |
+| `goto_item.open_in_browser`         | `ctrl+o`      | Opens an item of the go-to screen in the browser   |
+| `quick_view.copy_key`               | `ctrl+k`      | Copies the key of the item in the quick view       |
+| `quick_view.copy_url`               | `ctrl+j`      | Copies the URL of the item in the quick view       |
+| `quick_view.open_in_browser`        | `ctrl+o`      | Opens the item of the quick view in the browser    |
+| `quick_view.search`                 | `ctrl+r`      | Loads the item of the quick view                   |
+| `jql.editor`                        | `ctrl+e`      | Opens the JQL Query Editor                         |
+| `rich_text.edit`                    | `ctrl+e`      | Edits a rich-text field                            |
+| `create_work_item.save`             | `ctrl+s`      | Saves the new work item                            |
+| `create_work_item.edit_description` | `ctrl+e`      | Edits the description of the new work item         |
+| `vim.cursor_up`                     | `k`           | Moves the cursor of a table up                     |
+| `vim.cursor_down`                   | `j`           | Moves the cursor of a table down                   |
+| `vim.cursor_top`                    | `g`           | Moves the cursor of a table to the first item      |
+| `vim.cursor_bottom`                 | `G`           | Moves the cursor of a table to the last item       |
+| `vim.focus_next`                    | `j`           | Focuses the next item of a list                    |
+| `vim.focus_previous`                | `k`           | Focuses the previous item of a list                |
+
+```{note}
+The bindings whose ID starts with `vim.`, and the ones whose ID contains `vim_`, are only active when
+`enable_vim_keybindings` is enabled. Re-mapping them does not enable them.
+```
+
 ### Searching Work Items
 
 JiraTUI supports a few ways to search work items.

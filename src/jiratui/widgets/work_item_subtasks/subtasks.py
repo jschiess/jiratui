@@ -6,12 +6,13 @@ from textual.containers import VerticalScroll
 from textual.message import Message
 from textual.reactive import Reactive, reactive
 from textual.widget import Widget
-from textual.widgets import Collapsible, Link, Rule, Static
+from textual.widgets import Link, Rule, Static
 
 from jiratui.config import CONFIGURATION
 from jiratui.models import JiraIssue
 from jiratui.utils.styling import get_style_for_work_item_status
 from jiratui.utils.urls import build_external_url_for_issue
+from jiratui.widgets.commons.vim import VimCollapsible
 from jiratui.widgets.messages import SearchWorkItem
 from jiratui.widgets.screens.goto import GotToScreen
 from jiratui.widgets.screens.work_item_quick_view import WorkItemQuickViewScreen
@@ -24,7 +25,7 @@ class WorkItemSubtasks:
     issues: list[JiraIssue] | None = None
 
 
-class ChildWorkItemCollapsible(Collapsible):
+class ChildWorkItemCollapsible(VimCollapsible):
     """A collapsible to show the work items that are children of another work item.
 
     This widget is responsible for:
@@ -47,6 +48,7 @@ class ChildWorkItemCollapsible(Collapsible):
             description='Quick View',
             show=True,
             key_display='v',
+            id='subtask.quick_view',
         ),
         Binding(
             key='f6',
@@ -55,6 +57,7 @@ class ChildWorkItemCollapsible(Collapsible):
             show=True,
             key_display='f6',
             tooltip='View related work items',
+            id='subtask.goto',
         ),
     ]
 
@@ -123,6 +126,7 @@ class IssueChildWorkItemsWidget(VerticalScroll):
             description='New Subtask',
             show=True,
             key_display='^n',
+            id='subtasks.create',
         ),
     ]
 

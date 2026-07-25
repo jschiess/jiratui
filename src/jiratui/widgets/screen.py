@@ -14,6 +14,7 @@ from textual.worker import Worker
 from jiratui.api_controller.controller import APIController, APIControllerResponse
 from jiratui.config import CONFIGURATION
 from jiratui.constants import FULL_TEXT_SEARCH_DEFAULT_MINIMUM_TERM_LENGTH, LOGGER_NAME
+from jiratui.keys import VIM_ACTION_PREFIX, vim_keybindings_enabled
 from jiratui.models import (
     IssueType,
     JiraBaseIssue,
@@ -102,120 +103,140 @@ class MainScreen(Screen):
             key_display='/',
             tooltip='Find items using full-text search',
             show=True,
+            id='main.find_by_text',
         ),
         Binding(
             key='ctrl+r',
             action='search',
             description='Search',
             tooltip='Search items by search criteria',
+            id='main.search',
         ),
         Binding(
             key='p',
             action='focus_widget("p")',
             description='Focus the project selection widget',
             show=False,
+            id='main.focus_project',
         ),
         Binding(
             key='t',
             action='focus_widget("t")',
             description='Focus the issue type selection widget',
             show=False,
+            id='main.focus_issue_type',
         ),
         Binding(
             key='s',
             action='focus_widget("s")',
             description='Focus the status selection widget',
             show=False,
+            id='main.focus_status',
         ),
         Binding(
             key='a',
             action='focus_widget("a")',
             description='Focus the assignee selection widget',
             show=False,
+            id='main.focus_assignee',
         ),
         Binding(
             key='k',
             action='focus_widget("k")',
             description='Focus the "work item key" input widget',
             show=False,
+            id='main.focus_work_item_key',
         ),
         Binding(
             key='f',
             action='focus_widget("f")',
             description='Focus the "created from" input widget',
             show=False,
+            id='main.focus_created_from',
         ),
         Binding(
             key='u',
             action='focus_widget("u")',
             description='Focus the "created until" input widget',
             show=False,
+            id='main.focus_created_until',
         ),
         Binding(
             key='o',
             action='focus_widget("o")',
             description='Focus the "Order By" selection widget',
             show=False,
+            id='main.focus_order_by',
         ),
         Binding(
             key='v',
             action='focus_widget("v")',
             description='Focus the Active Sprint Checkbox',
             show=False,
+            id='main.focus_active_sprint',
         ),
         Binding(
             key='j',
             action='focus_widget("j")',
             description='Focus the JQL expression input widget',
             show=False,
+            id='main.focus_jql',
         ),
         Binding(
             key='1',
             action='focus_widget("1")',
             description='Focus the Search Results widget',
             show=False,
+            id='main.focus_search_results',
         ),
         Binding(
             key='2',
             action='focus_widget("2")',
             description='Focus the Info tab widget',
             show=False,
+            id='main.focus_info_tab',
         ),
         Binding(
             key='3',
             action='focus_widget("3")',
             description='Focus the Details tab widget',
             show=False,
+            id='main.focus_details_tab',
         ),
         Binding(
             key='4',
             action='focus_widget("4")',
             description='Focus the Comments tab widget',
             show=False,
+            id='main.focus_comments_tab',
         ),
         Binding(
             key='5',
             action='focus_widget("5")',
             description='Focus the Related tab widget',
             show=False,
+            id='main.focus_related_tab',
         ),
         Binding(
             key='6',
             action='focus_widget("6")',
             description='Focus the Attachments tab widget',
             show=False,
+            id='main.focus_attachments_tab',
         ),
         Binding(
             key='7',
             action='focus_widget("7")',
             description='Focus the Links tab widget',
             show=False,
+            id='main.focus_links_tab',
         ),
         Binding(
             key='8',
             action='focus_widget("8")',
             description='Focus the Subtasks tab widget',
             show=False,
+            id='main.focus_subtasks_tab',
         ),
         Binding(
             key='ctrl+n',
@@ -223,6 +244,7 @@ class MainScreen(Screen):
             description='New Item',
             show=True,
             key_display='^n',
+            id='main.create_work_item',
         ),
         Binding(
             key='ctrl+k',
@@ -231,6 +253,7 @@ class MainScreen(Screen):
             show=True,
             key_display='^k',
             tooltip='Copy the work item key',
+            id='main.copy_work_item_key',
         ),
         Binding(
             key='ctrl+j',
@@ -239,6 +262,7 @@ class MainScreen(Screen):
             show=True,
             key_display='^j',
             tooltip='Copy the work item URL',
+            id='main.copy_work_item_url',
         ),
         Binding(
             key='ctrl+g',
@@ -247,6 +271,7 @@ class MainScreen(Screen):
             show=True,
             key_display='^g',
             tooltip='Creates a Git branch with the key of the work item',
+            id='main.create_git_branch',
         ),
         Binding(
             key='f7',
@@ -255,6 +280,43 @@ class MainScreen(Screen):
             show=True,
             key_display='f7',
             tooltip='Show recently viewed items',
+            id='main.recent_history',
+        ),
+        # the bindings below are only enabled when config.enable_vim_keybindings is True
+        Binding(
+            key='h',
+            action='vim_focus_left_pane',
+            description='Focus the work items pane',
+            show=False,
+            id='main.vim_focus_left_pane',
+        ),
+        Binding(
+            key='l',
+            action='vim_focus_right_pane',
+            description='Focus the active tab',
+            show=False,
+            id='main.vim_focus_right_pane',
+        ),
+        Binding(
+            key='H',
+            action='vim_previous_tab',
+            description='Focus the previous tab',
+            show=False,
+            id='main.vim_previous_tab',
+        ),
+        Binding(
+            key='L',
+            action='vim_next_tab',
+            description='Focus the next tab',
+            show=False,
+            id='main.vim_next_tab',
+        ),
+        Binding(
+            key='escape',
+            action='vim_focus_search_results',
+            description='Back to the work items',
+            show=False,
+            id='main.vim_focus_search_results',
         ),
     ]
 
@@ -1073,6 +1135,63 @@ class MainScreen(Screen):
         if widget_id := self.keys_widget_ids_mapping.get(key):
             if target_widget := self.query_one(widget_id):
                 self.set_focus(target_widget)
+
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
+        """Check if an action may run."""
+
+        if action.startswith(VIM_ACTION_PREFIX) and not vim_keybindings_enabled(self.config):
+            return False
+        return super().check_action(action, parameters)
+
+    def action_vim_focus_left_pane(self) -> None:
+        """Focuses the pane on the left-hand side, i.e. the table with the work items."""
+
+        self.set_focus(self.search_results_table)
+
+    def action_vim_focus_right_pane(self) -> None:
+        """Focuses the pane on the right-hand side, i.e. the contents of the currently active tab."""
+
+        if active_pane := self.tabs.active_pane:
+            for widget in active_pane.query('*'):
+                if widget.focusable:
+                    self.set_focus(widget)
+                    return
+        self.set_focus(self.tabs)
+
+    def action_vim_focus_search_results(self) -> None:
+        """Moves the focus back to the table with the work items."""
+
+        self.set_focus(self.search_results_table)
+
+    def action_vim_previous_tab(self) -> None:
+        """Activates and focuses the tab on the left of the currently active tab."""
+
+        self._activate_tab(-1)
+
+    def action_vim_next_tab(self) -> None:
+        """Activates and focuses the tab on the right of the currently active tab."""
+
+        self._activate_tab(1)
+
+    def _activate_tab(self, offset: int) -> None:
+        """Activates the tab that is `offset` positions away from the currently active one.
+
+        Args:
+            offset: the number of positions, and the direction, to move. E.g. `-1` activates the previous tab.
+
+        Returns:
+            None
+        """
+
+        panes: list[str] = [pane.id for pane in self.tabs.query(TabPane) if pane.id]
+        if not panes:
+            return
+        try:
+            position = panes.index(self.tabs.active)
+        except ValueError:
+            position = 0
+        self.tabs.active = panes[(position + offset) % len(panes)]
+        self.action_vim_focus_right_pane()
 
     def action_copy_issue_url(self) -> None:
         """Copy to the clipboard the URL of the item currently selected in the search results."""

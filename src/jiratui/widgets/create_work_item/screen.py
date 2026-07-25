@@ -76,7 +76,14 @@ class TextAreaTabbedContent(TabbedContent):
     """Custom TabbedContent with a key binding for editing content."""
 
     BINDINGS = [
-        Binding('ctrl+e', 'edit_content', 'Edit', show=True, key_display='^e'),
+        Binding(
+            key='ctrl+e',
+            action='edit_content',
+            description='Edit',
+            show=True,
+            key_display='^e',
+            id='create_work_item.edit_description',
+        ),
     ]
 
     def __init__(self, *args, **kwargs):
@@ -184,7 +191,14 @@ class AddWorkItemScreen(Screen[dict[str, Any]]):
     """
 
     BINDINGS = [
-        Binding('ctrl+s', 'save_work_item', 'Save', show=True, key_display='^s'),
+        Binding(
+            key='ctrl+s',
+            action='save_work_item',
+            description='Save',
+            show=True,
+            key_display='^s',
+            id='create_work_item.save',
+        ),
         Binding('escape', 'app.pop_screen', 'Close'),
     ]
 

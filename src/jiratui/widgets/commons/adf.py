@@ -188,7 +188,14 @@ class ADFMarkdownTextAreaWidget(TextArea, BaseFieldWidget, BaseUpdateFieldWidget
     """
 
     BINDINGS = [
-        Binding('ctrl+e', 'edit_content', 'Edit', show=True, key_display='^e'),
+        Binding(
+            key='ctrl+e',
+            action='edit_content',
+            description='Edit',
+            show=True,
+            key_display='^e',
+            id='rich_text.edit',
+        ),
     ]
 
     @dataclass

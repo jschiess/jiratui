@@ -10,9 +10,10 @@ from textual.widgets import DataTable, Footer, Rule, Static
 
 from jiratui.utils.history import HistoryManager
 from jiratui.utils.urls import build_external_url_for_issue
+from jiratui.widgets.commons.vim import VimDataTable
 
 
-class HistoryWorkItemsTable(DataTable):
+class HistoryWorkItemsTable(VimDataTable):
     """A [DataTable](textual.widgets.DataTable) that displays the entries in the recent history.
 
     This table is responsible for:
@@ -35,6 +36,7 @@ class HistoryWorkItemsTable(DataTable):
             show=True,
             key_display='^o',
             tooltip='Open in browser',
+            id='history_item.open_in_browser',
         ),
         Binding(
             key='ctrl+k',
@@ -43,6 +45,7 @@ class HistoryWorkItemsTable(DataTable):
             show=True,
             key_display='^k',
             tooltip='Copy key',
+            id='history_item.copy_key',
         ),
         Binding(
             key='ctrl+j',
@@ -51,6 +54,7 @@ class HistoryWorkItemsTable(DataTable):
             show=True,
             key_display='^j',
             tooltip='Copy URL',
+            id='history_item.copy_url',
         ),
     ]
 
@@ -123,6 +127,7 @@ class HistoryScreen(ModalScreen[str]):
             show=True,
             key_display='d',
             tooltip='Empty History',
+            id='history.empty',
         ),
     ]
     TITLE = 'Recent History'

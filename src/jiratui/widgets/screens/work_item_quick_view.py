@@ -24,10 +24,11 @@ from jiratui.widgets.commons.factory_utils import (
     FieldMetadata,
     build_read_only_rich_text_widget,
 )
+from jiratui.widgets.commons.vim import VimDataTable
 from jiratui.widgets.commons.widgets import ReadOnlyPlainTextTextAreaWidget
 
 
-class QuickViewDetails(DataTable):
+class QuickViewDetails(VimDataTable):
     """A [DataTable](textual.widgets.DataTable) that displays the details of a work item being displayed on the quick
     view screen.
 
@@ -84,6 +85,7 @@ class WorkItemQuickViewScreen(ModalScreen[str]):
             show=True,
             key_display='^o',
             tooltip='Open in browser',
+            id='quick_view.open_in_browser',
         ),
         Binding(
             key='ctrl+k',
@@ -92,6 +94,7 @@ class WorkItemQuickViewScreen(ModalScreen[str]):
             show=True,
             key_display='^k',
             tooltip='Copy key',
+            id='quick_view.copy_key',
         ),
         Binding(
             key='ctrl+j',
@@ -100,6 +103,7 @@ class WorkItemQuickViewScreen(ModalScreen[str]):
             show=True,
             key_display='^j',
             tooltip='Copy URL',
+            id='quick_view.copy_url',
         ),
         Binding(
             key='ctrl+r',
@@ -108,6 +112,7 @@ class WorkItemQuickViewScreen(ModalScreen[str]):
             show=True,
             key_display='^r',
             tooltip='Search and Fetch Work Item',
+            id='quick_view.search',
         ),
     ]
     TITLE = 'Work Item Details'

@@ -501,6 +501,12 @@ def completions(shell):
     type=int,
     help='Focus and open the work item at the specified position on startup. Requires --search-on-startup.',
 )
+@click.option(
+    '--vim',
+    is_flag=True,
+    default=False,
+    help='Enable the Vim-like keybindings.',
+)
 def ui(
     project_key: str | None = None,
     work_item_key: str | None = None,
@@ -509,6 +515,7 @@ def ui(
     theme: str | None = None,
     search_on_startup: bool = False,
     focus_item_on_startup: int | None = None,
+    vim: bool = False,
 ):
     """Launches the JiraTUI application."""
     if theme and theme not in BUILTIN_THEMES:
@@ -530,6 +537,8 @@ def ui(
         # Only override config file value if CLI flag is explicitly set to True
         if search_on_startup:
             settings.search_on_startup = search_on_startup
+        if vim:
+            settings.enable_vim_keybindings = vim
     except FileNotFoundError as e:
         console.print(e)
         sys.exit(1)

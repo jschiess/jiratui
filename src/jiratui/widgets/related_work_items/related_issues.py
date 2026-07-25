@@ -8,13 +8,14 @@ from textual.containers import VerticalScroll
 from textual.message import Message
 from textual.reactive import Reactive, reactive
 from textual.widget import Widget
-from textual.widgets import Collapsible, Link, Static
+from textual.widgets import Link, Static
 
 from jiratui.api_controller.controller import APIControllerResponse
 from jiratui.config import CONFIGURATION
 from jiratui.models import RelatedJiraIssue
 from jiratui.utils.styling import get_style_for_work_item_priority
 from jiratui.utils.urls import build_external_url_for_issue
+from jiratui.widgets.commons.vim import VimCollapsible
 from jiratui.widgets.messages import SearchWorkItem
 from jiratui.widgets.related_work_items.add import AddWorkItemRelationshipScreen
 from jiratui.widgets.screens.confirmation import ConfirmationScreen
@@ -28,7 +29,7 @@ class WorkItemRelatedItems:
     related_items: list[RelatedJiraIssue] | None = None
 
 
-class RelatedIssueCollapsible(Collapsible):
+class RelatedIssueCollapsible(VimCollapsible):
     """A collapsible to show a work item related to another item.
 
     This widget is responsible for:
@@ -54,12 +55,14 @@ class RelatedIssueCollapsible(Collapsible):
             description='Quick View',
             show=True,
             key_display='v',
+            id='related_item.quick_view',
         ),
         Binding(
             key='d',
             action='unlink_work_item',
             description='Unlink',
             key_display='d',
+            id='related_item.unlink',
         ),
         Binding(
             key='f6',
@@ -68,6 +71,7 @@ class RelatedIssueCollapsible(Collapsible):
             show=True,
             key_display='f6',
             tooltip='View related work items',
+            id='related_item.goto',
         ),
     ]
     NOTIFICATIONS_DEFAULT_TITLE = 'Related Work Items'
@@ -181,6 +185,7 @@ class RelatedIssuesWidget(VerticalScroll):
             action='link_work_item',
             description='New Related',
             key_display='n',
+            id='related_items.add',
         )
     ]
 

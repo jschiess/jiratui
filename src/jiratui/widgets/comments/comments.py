@@ -9,7 +9,7 @@ from textual.binding import Binding
 from textual.containers import HorizontalGroup, VerticalScroll
 from textual.message import Message
 from textual.reactive import Reactive, reactive
-from textual.widgets import Collapsible, Link, Rule, Static
+from textual.widgets import Link, Rule, Static
 
 from jiratui.api_controller.controller import APIControllerResponse
 from jiratui.config import CONFIGURATION
@@ -18,6 +18,7 @@ from jiratui.utils.urls import build_external_url_for_comment
 from jiratui.widgets.comments.add import AddCommentScreen
 from jiratui.widgets.commons.adf import ReadOnlyADFMarkdownTextAreaWidget
 from jiratui.widgets.commons.factory_utils import build_read_only_rich_text_widget
+from jiratui.widgets.commons.vim import VimCollapsible
 from jiratui.widgets.commons.widgets import ReadOnlyPlainTextTextAreaWidget
 from jiratui.widgets.screens.confirmation import ConfirmationScreen
 
@@ -30,7 +31,7 @@ class WorkItemComments:
     comments: list[IssueComment] | None = None
 
 
-class CommentCollapsible(Collapsible):
+class CommentCollapsible(VimCollapsible):
     """A collapsible to show a comment associated to a work item.
 
     **See Also**:
@@ -44,6 +45,7 @@ class CommentCollapsible(Collapsible):
             description='\uf014',
             key_display='d',
             tooltip='Delete comment',
+            id='comment.delete',
         ),
     ]
 
@@ -107,6 +109,7 @@ class IssueCommentsWidget(VerticalScroll):
             description='New Comment',
             key_display='n',
             tooltip='Add new comment',
+            id='comments.add',
         )
     ]
 

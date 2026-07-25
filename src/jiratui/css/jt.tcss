@@ -1152,6 +1152,18 @@ TextSearchScreen > Input {
     background: transparent;
 }
 
+/* Vim-like command line */
+VimCommandScreen {
+    align: center bottom;
+}
+VimCommandScreen > Input {
+    padding: 1 1 0 1;
+    width: 50%;
+    height: 5;
+    border: round $primary;
+    background: transparent;
+}
+
 /* Screen to display attached files */
 ViewAttachmentScreen {
     align: center middle;

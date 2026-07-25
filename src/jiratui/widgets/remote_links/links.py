@@ -5,15 +5,16 @@ from textual.binding import Binding
 from textual.containers import VerticalScroll
 from textual.message import Message
 from textual.reactive import Reactive, reactive
-from textual.widgets import Collapsible, Link, Static
+from textual.widgets import Link, Static
 
 from jiratui.api_controller.controller import APIControllerResponse
 from jiratui.models import IssueRemoteLink
+from jiratui.widgets.commons.vim import VimCollapsible
 from jiratui.widgets.remote_links.add import AddRemoteLinkScreen
 from jiratui.widgets.screens.confirmation import ConfirmationScreen
 
 
-class IssueRemoteLinkCollapsible(Collapsible):
+class IssueRemoteLinkCollapsible(VimCollapsible):
     """A collapsible to show a remote link associated to a work item.
 
     The widget posts the message `jiratui.widgets.remote_links.links.IssueRemoteLinkCollapsible.Deleted` when a link
@@ -29,6 +30,7 @@ class IssueRemoteLinkCollapsible(Collapsible):
             action='delete_remote_link',
             description='Delete Link',
             key_display='d',
+            id='remote_link.delete',
         )
     ]
     NOTIFICATIONS_DEFAULT_TITLE = 'Remote Links'
@@ -88,6 +90,7 @@ class IssueRemoteLinksWidget(VerticalScroll):
             action='add_remote_link',
             description='New Link',
             key_display='n',
+            id='remote_links.add',
         )
     ]
 

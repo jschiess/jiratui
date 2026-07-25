@@ -155,24 +155,27 @@ class IssueDetailsWidget(Vertical):
     """Reactive variable to clear the fields in the form."""
 
     BINDINGS = [
-        ('ctrl+s', 'save_work_item', 'Save'),
+        Binding(key='ctrl+s', action='save_work_item', description='Save', id='details.save'),
         Binding(
             key='x',
             action='focus_widget("x")',
             description='Focus the Assignee widget',
             show=False,
+            id='details.focus_assignee',
         ),
         Binding(
             key='y',
             action='focus_widget("y")',
             description='Focus the Priority widget',
             show=False,
+            id='details.focus_priority',
         ),
         Binding(
             key='z',
             action='focus_widget("z")',
             description='Focus the Status widget',
             show=False,
+            id='details.focus_status',
         ),
         Binding(
             key='ctrl+l, ctrl+t',
@@ -180,9 +183,15 @@ class IssueDetailsWidget(Vertical):
             description='Worklog',
             show=True,
             key_display='^l',
+            id='details.worklog',
         ),
         Binding(
-            key='ctrl+f', action='flag_work_item', description='Flag', show=True, key_display='^f'
+            key='ctrl+f',
+            action='flag_work_item',
+            description='Flag',
+            show=True,
+            key_display='^f',
+            id='details.flag',
         ),
     ]
 

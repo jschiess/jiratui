@@ -40,6 +40,13 @@ models.md
 config.md
 ```
 
+## Keybindings
+
+```{toctree}
+:maxdepth: 1
+keys.md
+```
+
 ## Widgets
 
 ```{toctree}

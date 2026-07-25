@@ -14,7 +14,6 @@ from textual.message import Message
 from textual.screen import Screen
 from textual.widgets import (
     Button,
-    Collapsible,
     DataTable,
     Footer,
     Input,
@@ -32,6 +31,7 @@ from jiratui.models import (
     TimeTracking,
 )
 from jiratui.utils.urls import build_external_url_for_work_log
+from jiratui.widgets.commons.vim import VimCollapsible
 from jiratui.widgets.work_item_worklog.widgets import (
     LogDateTimeInput,
     TimeRemainingInput,
@@ -61,7 +61,7 @@ class LogWorkScreenResult:
     worklog_id: str | None = None  # required when editing a og entry
 
 
-class WorkLogCollapsible(Collapsible):
+class WorkLogCollapsible(VimCollapsible):
     """A collapsible widget to display information of a worklog and to handle opening the worklog details in the
     browser and deleting work logs.
 
@@ -85,18 +85,21 @@ class WorkLogCollapsible(Collapsible):
             action='open_in_browser',
             description='Browse',
             show=True,
+            id='worklog.open_in_browser',
         ),
         Binding(
             key='d',
             action='delete_worklog',
             description='Delete',
             show=True,
+            id='worklog.delete',
         ),
         Binding(
             key='ctrl+e',
             action='edit_worklog_entry',
             description='Edit',
             show=True,
+            id='worklog.edit',
         ),
     ]
 
@@ -212,6 +215,7 @@ class WorkItemWorkLogScreen(Screen[dict]):
             action='log_work',
             description='Log Work',
             show=True,
+            id='worklog.add',
         ),
     ]
     TITLE = 'Worklog'
